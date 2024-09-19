@@ -26,6 +26,13 @@ jobs:
         run: |
           apt-get update
           apt-get install -y docker.io
+      - name: Get container ID
+        id: get_container_id
+        run: |
+          container_id=$(docker ps -q -f ancestor=ubuntu:jammy)
+          full_container_id=$(docker inspect --format="{{.Id}}" $container_id)
+          echo "Container ID: $full_container_id"
+          echo "::set-output name=container_id::$full_container_id"
       - name: Run and inspect Docker container
         run: |
           docker inspect --format '{{ .Config.Env }}' ${{ steps.get_container_id.outputs.container_id }}
